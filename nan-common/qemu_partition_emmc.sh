@@ -196,18 +196,54 @@ finish()
 }
 
 
-blue_underlined_bold_echo "*** Nanosonics Variscite IMX6ULL EMMC partitioning Script ***"
+prepare_database()
+{
+    echo
+    blue_bold_echo "Copy p5.db to data partition"
+    DIR="${PWD}/mnt_data/"
+    if [[ ! -d $DIR ]] ; then
+	mkdir ${DIR}
+    fi
+    mount ${NODE}${PART}6 ${DIR}
+    sync; sleep 1
+    cp ${PWD}/p5.db ${DIR}
+    sync; sleep 1
+    umount ${DIR}
+    sync; sleep 1
+    losetup -d ${NODE}
+    sync; sleep 1
+}
 
+create_emmc_file()
+{
+    echo
+    blue_underlined_bold_echo "*** create 8G raw format qemu image***"
+    ./qemu-img create -f raw emmc.img 8G; sleep 1
+    chmod 666 emmc.img
 
-blue_bold_echo "Creating partitions"
-BLOCK=loop0
-        
-NODE=/dev/${BLOCK}
+    blue_underlined_bold_echo "*** Attach the image to ${NODE} ***"
+    losetup -f -P emmc.img
+    sync; sleep 1
+}
+
+NODE=$(losetup -f)
 if [[ ! -b $NODE ]] ; then
     red_bold_echo "ERROR: Can't find eMMC device ($NODE)."
     red_bold_echo "Please verify you are using the correct options for your SOM."
     exit 1
 fi
+
+BLOCK="$(cut -d'/' -f3 <<<${NODE})"
+
+
+create_emmc_file
+
+blue_underlined_bold_echo "*** Nanosonics Variscite IMX6ULL EMMC partitioning Script ***"
+
+
+
+blue_bold_echo "Creating partitions"
+
 
 PART=p
 MOUNTDIR_PREFIX=/run/media/${BLOCK}${PART}
@@ -236,5 +272,7 @@ delete_emmc
 create_emmc_parts
     
 format_emmc_parts
+
+prepare_database
 
 finish
