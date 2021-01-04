@@ -79,8 +79,8 @@ static void nano_imx6ul_init(MachineState *machine)
 
     object_initialize_child(OBJECT(machine), "soc", &s->soc, TYPE_FSL_IMX6UL);
 
-    object_property_set_uint(OBJECT(&s->soc), "fec1-phy-num", 2, &error_fatal);
-    object_property_set_uint(OBJECT(&s->soc), "fec2-phy-num", 1, &error_fatal);
+    object_property_set_uint(OBJECT(&s->soc), "fec1-phy-num", 1, &error_fatal);
+    object_property_set_uint(OBJECT(&s->soc), "fec2-phy-num", 2, &error_fatal);
     object_property_set_bool(OBJECT(&s->soc), "realized", true, &error_fatal);
 
     memory_region_init_ram(&s->ram, NULL, "nano-imx6ul.ram",
