@@ -298,7 +298,8 @@ static uint32_t imx_phy_read(IMXFECState *s, int reg)
         val = s->phy_status;
         break;
     case 2:     /* ID1 */
-        val = 0x0007;
+        //val = 0x0007;
+        val = 0x0022;
         break;
     case 3:     /* ID2 */
         val = 0xc0d1;
